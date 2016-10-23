@@ -5,11 +5,11 @@ void followLine();
 void convertToBin(int num, int a[]);
 
 double fqcy[] = {0,261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25};
-float timePerStep[] = {0,7.5f,6.7f, 6.0f, 5.6f, 5.0f, 4.5f,4.0f,3.7f};//values for the timer (in microseconds)
+//float timePerStep[] = {0,7.5f,6.7f, 6.0f, 5.6f, 5.0f, 4.5f,4.0f,3.7f};//values for the timer (in microseconds)
 int noteTimerCount = 0;
 IntervalTimer noteTimer;
-int timerCount = 0;
-bool countingUp = true;
+//int timerCount = 0;
+//bool countingUp = true;
 int note = 0; //from C to C (where 0 is no note)
 void setup() {
   
@@ -34,11 +34,16 @@ void drive (int s, int dir) {
 void playNote (void) {
   noteTimerCount++;
 
-  if((noteTimerCount*10)%((int)(timePerStep[note]*10)) == 0) count(); //once the timer is a whole myltiple of the amount of time per step, increases the voltage by 1
+  int bin[8] = {0};
+  convertToBin((int)(127.5+127.5*sin(2*(3.141592654)*fqcy[note]*0.0000001*noteTimerCount) +0.5),bin); //added the plus 0.5 so that the cast to int will essentially follow traditional rounding standards 
+  for(int i = 0; i < 8; i++){
+    if(bin[i] == 1) digitalWrite(i,HIGH);
+    else digitalWrite(i,LOW); 
+  }
 
 
                         //the timer will tick every time per level, and every tick will increase the value of a counter variable
-if (noteTimerCount == 3123540) noteTimerCount = 0; //3123540 is the LCM of all of the time per step variables so this is simply so that notTimerCount wont overflow and skip a repetition
+if (noteTimerCount == 10000000) noteTimerCount = 0; //after one second, restarts
 }
 
 void colourToNote () {
@@ -55,7 +60,7 @@ void convertToBin(int num, int a[]) {
     num /= 2;
   }
 }
-void count(){
+/*void count(){
   if (timerCount == 255) countingUp = false;
   else if(timerCount == 0) countingUp = true;
   if (countingUp) timerCount +=1;
@@ -69,5 +74,5 @@ void count(){
     else digitalWrite(i,LOW);
   }
 
-}
+}*/
 
