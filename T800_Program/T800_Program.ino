@@ -7,7 +7,7 @@ void convertToBin(int num, int a[]);
 double fqcy[] = {0,261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25};
 //float timePerStep[] = {0,7.5f,6.7f, 6.0f, 5.6f, 5.0f, 4.5f,4.0f,3.7f};//values for the timer (in microseconds)
 int numNotes = 8;
-int noteColourRanges[] = {100,200,300,400,500,600,700,800,900};
+int noteColourRanges[] = {170,195,225,265,305,345,900,900,900};
 int noteTimerCount = 0;
 IntervalTimer noteTimer;
 
@@ -19,12 +19,12 @@ bool countingUp = true;
 
 int test = 0;
 
-#define RSpeedPin  11
-#define RDirPin  8
+#define RSpeedPin  9
+#define RDirPin  11
 #define LSpeedPin  10
 #define LDirPin  12
-#define lineGrayscaleSensor  0
-#define musicGrayscaleSensor  2
+#define lineGrayscaleSensor  A0
+#define musicGrayscaleSensor  A2
 int Speed = 10;
 int edge = 500;
 
@@ -47,7 +47,7 @@ void loop() {
 }
 
 // Plays a note in a set octave
-void playNote (void) {
+void playNote (void) {//where is note var used, and does it know not to play anything if note == 0?
   noteTimerCount++;
 
   int bin[8] = {0};
@@ -80,16 +80,18 @@ void followLine() {
 void updateNote() {
   //should add some logic that weeds out outlier data (ie rapid changes in note)
   int musicReading = readGrayscaleSensor(musicGrayscaleSensor);
+  //Serial.println(musicReading);
   int tempNote = 0, index =0 ;
   while (musicReading > noteColourRanges[index]) {
     tempNote++;
     index++;
     if (index == numNotes) {
-      tempNote = 0; //undefined if below lowest note range start or higher than highest note range end
+      tempNote = 9; //undefined if below lowest note range start or higher than highest note range end
       break;
     }
   }
   note = tempNote;
+  Serial.println(note);
 }
 
 void convertToBin(int num, int a[]) {
