@@ -8,9 +8,29 @@ double fqcy[] = {0,261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.2
 //float timePerStep[] = {0,7.5f,6.7f, 6.0f, 5.6f, 5.0f, 4.5f,4.0f,3.7f};//values for the timer (in microseconds)
 int noteTimerCount = 0;
 IntervalTimer noteTimer;
+<<<<<<< HEAD
 //int timerCount = 0;
 //bool countingUp = true;
+=======
+int timerCount = 0;
+bool countingUp = true;
+<<<<<<< HEAD
+int test = 0;
+int note = 0;
+
+#define RSpeedPin  11
+#define RDirPin  8
+#define LSpeedPin  10
+#define LDirPin  12
+#define lineGrayscaleSensor  0
+#define musicGrayscaleSensor  2
+int Speed = 10;
+int edge = 500;
+
+=======
+>>>>>>> origin/master
 int note = 0; //from C to C (where 0 is no note)
+>>>>>>> origin/master
 void setup() {
   
   Serial.begin(9600);
@@ -22,8 +42,7 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  followLine();
 }
 
 void drive (int s, int dir) {
@@ -51,7 +70,17 @@ void colourToNote () {
 }
 
 void followLine() {
-
+  //assumed black is higher, have to check that
+  //values will have to be try tested of course
+  int lineReading = readGrayscaleSensor(lineGrayscaleSensor);
+  int difference = lineReading- edge;
+  int leftMultiplier =0, rightMultiplier = 0;
+  if (difference > 0) {
+    leftMultiplier -= abs(difference)/100.0;
+  } else {
+    rightMultiplier -= abs(difference)/100.0;
+  }
+  forward(leftMultiplier,rightMultiplier);
 }
 
 void convertToBin(int num, int a[]) {
@@ -75,4 +104,33 @@ void convertToBin(int num, int a[]) {
   }
 
 }*/
+
+int readGrayscaleSensor(int pin) {
+  return analogRead(pin);
+}
+
+void stop() {
+  digitalWrite( RSpeedPin, LOW );
+  digitalWrite( RDirPin, LOW );
+  digitalWrite( LSpeedPin, LOW );
+  digitalWrite( LDirPin, LOW );
+}
+
+
+void forward(double leftMultiplier, double rightMultiplier)
+{
+  digitalWrite(RDirPin, HIGH);
+  analogWrite(RSpeedPin, Speed*rightMultiplier);
+  digitalWrite(LDirPin, HIGH);
+  analogWrite(LSpeedPin, Speed*leftMultiplier);
+}
+
+void backward(double leftMultiplier, double rightMultiplier)
+{
+  digitalWrite(RDirPin, LOW);
+  analogWrite(RSpeedPin, Speed*rightMultiplier);
+  digitalWrite(LDirPin, LOW);
+  analogWrite(LSpeedPin, Speed*leftMultiplier);
+}
+
 
