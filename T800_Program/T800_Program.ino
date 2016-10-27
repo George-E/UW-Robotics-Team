@@ -5,19 +5,19 @@ void followLine();
 void convertToBin(int num, int a[]);
 
 double fqcy[] = {0,261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25};
-<<<<<<< HEAD
+//<<<<<<< HEAD
 //float timePerStep[] = {0,7.5f,6.7f, 6.0f, 5.6f, 5.0f, 4.5f,4.0f,3.7f};//values for the timer (in microseconds)
 int numNotes = 8;
 int noteColourRanges[] = {170,195,225,265,305,345,900,900,900};
-=======
+//=======
 
->>>>>>> origin/master
+//>>>>>>> origin/master
 int noteTimerCount = 0;
 IntervalTimer noteTimer;
 
 
 int test = 0;
-int note = 0;
+int note = 3;
 
 #define RSpeedPin  9
 #define RDirPin  11
@@ -40,7 +40,7 @@ void setup() {
 }
 
 void loop() {
-  followLine();
+  //followLine();
 }
 
 void drive (int s, int dir) {
@@ -55,7 +55,7 @@ void playNote (void) {//where is note var used, and does it know not to play any
   if(note != 0){
     convertToBin((int)(127.5+127.5*sin(2*(3.141592654)*fqcy[note]*0.0000001*noteTimerCount) +0.5),bin); //added the plus 0.5 so that the cast to int will essentially follow traditional rounding standards 
     for(int i = 0; i < 8; i++){
-      if(bin[i] == 1) digitalWrite(i,HIGH);
+      if(bin[8-i] == 1) digitalWrite(i,HIGH);
       else digitalWrite(i,LOW); 
     }
   }
@@ -88,7 +88,7 @@ void followLine() {
   forward(leftMultiplier,rightMultiplier);
 }
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 void updateNote() {
   //should add some logic that weeds out outlier data (ie rapid changes in note)
   int musicReading = readGrayscaleSensor(musicGrayscaleSensor);
@@ -106,8 +106,8 @@ void updateNote() {
   Serial.println(note);
 }
 
-=======
->>>>>>> origin/master
+//=======
+//>>>>>>> origin/master
 void convertToBin(int num, int a[]) {
   for (int i = 7; i >= 0; i--) {
     a[i] = num % 2;
