@@ -38,12 +38,15 @@ void setup() {
   for(int i = 0; i < 8; i++) pinMode(i,OUTPUT);
   
   //noteTimer.begin(playNote,0.1f);
-  Timer1.initialize(40);
+  Timer1.initialize(freqToTimerWait(fqcy[4]));
   Timer1.attachInterrupt(playNote);
  Timer1.start();
   
 }
 
+double freqToTimerWait(double freq) {
+  return (1/freq)*1000000/250;
+}
 
 void loop() {
   //followLine();
