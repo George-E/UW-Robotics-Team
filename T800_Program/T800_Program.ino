@@ -9,6 +9,10 @@
 #define lineGrayscaleSensor  A0
 #define musicGrayscaleSensor  A1
 #define tempoButton  A8
+#define REnocderA  16
+#define REnocderB  17
+#define LEnocderA  18
+#define LEnocderB  19
 
 int tempos[] = {0, 60, 80, 100, 120};
 int tempoIndex = 0;
@@ -19,15 +23,13 @@ int RVoltStart[] = {0, 65, 73, 76, 81};
 double fqcy[] = {0, 293.66, 329.63, 369.99,392.00,440.00,493.88,554.37,587.33};
 
 int numNotes = 8;
-int noteColourRanges[] = {170, 195, 225, 265, 305, 345, 900, 900, 900};
+int noteColourRanges[] = {170, 195, 225, 265, 305, 345, 380, 420};
 
 char sinBinVals[waveRes] = {0};
 int test = 0;
 int note = 8;
 
-int edge = 207;//DO NOT CHANGE
-//left 17 and 16
-//right 18 and 19
+int edge = 207;//DO NOT CHANGE (measured value for edge)
 
 int noteTimerCount = 0;
 
@@ -45,9 +47,9 @@ double desiredSpeed = 0;//tempoPBMtoSpeedCMS(60); //cm/s
 long milliLast = millis();
 
 
-int melody1[] = {
+/*int melody1[] = {
 6,5,4,5,6,6,6,5,5,5,6,6,7,6,5,4,5,6,6,6,6,6,5,5,4,3,2
-};
+};*/
 
 
 void setup() {
@@ -72,12 +74,12 @@ void setup() {
   Timer1.attachInterrupt(playNote);
   Timer1.start();
   //For testing sounds
-  for (int i=0; i<=sizeof(melody1)/sizeof(int);i++)
+  /*for (int i=0; i<=sizeof(melody1)/sizeof(int);i++)
   {
     note = melody1[i];
     updateTimerWait();
     delay(500);
-  }
+  }*/
   updateTimerWait();
 
 }
@@ -175,7 +177,7 @@ int analogToDigitalRead(int an) {
 
 // Plays a note in a set octave
 void playNote (void) {//where is note var used, and does it know not to play anything if note == 0?
-  if (tempoIndex == 0) {
+  if (tempoIndex != 0) {
     char num = sinBinVals[noteTimerCount];
     //Serial.println(sinVals[noteTimerCount]);
     for (int i = 0; i < 8; i++) {
@@ -191,16 +193,17 @@ void playNote (void) {//where is note var used, and does it know not to play any
 void updateNote() {
   //should add some logic that weeds out outlier data (ie rapid changes in note)
   int musicReading = readGrayscaleSensor(musicGrayscaleSensor);
-  //Serial.println(musicReading);
+  Serial.print(musicReading);
   int tempNote = 0, index = 0 ;
   while (musicReading > noteColourRanges[index]) {
     tempNote++;
     index++;
     if (index == numNotes) {
-      tempNote = 0; //undefined if below lowest note range start or higher than highest note range end
       break;
     }
   }
+  Serial.print("\t");
+  Serial.println(note);
   if (tempNote != note) {
     note = tempNote;
     updateTimerWait();
@@ -254,8 +257,8 @@ void stop()
 }
 
 void updateSpeed() {
-  ticksR += tickIncrease(true, 16, 17);
-  ticksL += tickIncrease(false, 18, 19);
+  ticksR += tickIncrease(true, REnocderA, REnocderB);
+  ticksL += tickIncrease(false, LEnocderA, LEnocderB);
   
   long milliNow = millis();
 
