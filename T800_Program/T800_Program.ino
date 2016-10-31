@@ -45,6 +45,11 @@ double desiredSpeed = 0;//tempoPBMtoSpeedCMS(60); //cm/s
 long milliLast = millis();
 
 
+int melody1[] = {
+6,5,4,5,6,6,6,5,5,5,6,6,7,6,5,4,5,6,6,6,6,6,5,5,4,3,2
+};
+
+
 void setup() {
   for (int i = 0; i < waveRes; i++) {
     sinBinVals[i] = (int) (127.5 + 127.5 * sin(PI * 2 * (double)i / waveRes) + 0.5); //+.5 so rounding occurs
@@ -67,12 +72,12 @@ void setup() {
   Timer1.attachInterrupt(playNote);
   Timer1.start();
   //For testing sounds
-  for (int i=0; i<=8;i++)
-    {
-    note = i;
+  for (int i=0; i<=sizeof(melody1)/sizeof(int);i++)
+  {
+    note = melody1[i];
     updateTimerWait();
-    delay(3000);
-    }
+    delay(500);
+  }
   updateTimerWait();
 
 }
