@@ -23,13 +23,13 @@ int RVoltStart[] = {0, 65, 73, 76, 81};
 double fqcy[] = {0, 293.66, 329.63, 369.99,392.00,440.00,493.88,554.37,587.33};
 
 int numNotes = 8;
-int noteColourRanges[] = {170, 195, 225, 265, 305, 345, 380, 420};
+int noteColourRanges[] = {140, 188, 202, 220, 270, 310, 328,340};//352, 398};
 
 char sinBinVals[waveRes] = {0};
 int test = 0;
 int note = 8;
 
-int edge = 207;//DO NOT CHANGE (measured value for edge)
+int edge = 200;//207;//DO NOT CHANGE (measured value for edge)
 
 int noteTimerCount = 0;
 
@@ -190,10 +190,13 @@ void playNote (void) {//where is note var used, and does it know not to play any
   if (noteTimerCount == waveRes) noteTimerCount = 0; //after one second, restarts
 }
 
+
 void updateNote() {
+    if (millis()%200 == 0) {
   //should add some logic that weeds out outlier data (ie rapid changes in note)
   int musicReading = readGrayscaleSensor(musicGrayscaleSensor);
-  Serial.print(musicReading);
+  
+ 
   int tempNote = 0, index = 0 ;
   while (musicReading > noteColourRanges[index]) {
     tempNote++;
@@ -201,13 +204,19 @@ void updateNote() {
     if (index == numNotes) {
       break;
     }
-  }
+  
+
+   Serial.print(musicReading);
   Serial.print("\t");
   Serial.println(note);
+  }
+  
   if (tempNote != note) {
     note = tempNote;
     updateTimerWait();
   }
+
+    }
 }
 
 int readGrayscaleSensor(int pin) {
@@ -249,7 +258,6 @@ void forward(double leftMultiplier, double rightMultiplier)
 
 void stop()
 {
-  
   digitalWrite(RDirPin, LOW);
   digitalWrite(LDirPin, LOW);
   digitalWrite(RSpeedPin, LOW);
@@ -274,14 +282,14 @@ void updateSpeed() {
     Serial.print("\t");
     Serial.println(RSpeedNow);*/
 
-    if (desiredSpeed - LSpeedNow > 0.2)
+    if (desiredSpeed - LSpeedNow > 0.05)
       LVolts -= 1;
-    else if (desiredSpeed - LSpeedNow < -0.2)
+    else if (desiredSpeed - LSpeedNow < -0.05)
       LVolts += 1;
 
     if (desiredSpeed - RSpeedNow > 0.2)
       RVolts += 1;
-    else if (desiredSpeed - RSpeedNow < -0.2)
+    else if (desiredSpeed - RSpeedNow < -0.05)
       RVolts -= 1;
 
     if (RVolts > 255)
