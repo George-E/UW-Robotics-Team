@@ -133,7 +133,7 @@ double tempoPBMtoSpeedCMS(int tempo) {
 }
 
 void loop() {
-  updateNote();
+  //updateNote();
   followLine();
   if (buttonPressed()) {
     iterateTempo();
@@ -191,8 +191,11 @@ void playNote (void) {//where is note var used, and does it know not to play any
 }
 
 
+long lastmilli = 0;
+int notesss[4]= {0};
 void updateNote() {
-    if (millis()%200 == 0) {
+    if (millis()%50 == 0 && abs(lastmilli-millis())> 200) {
+
   //should add some logic that weeds out outlier data (ie rapid changes in note)
   int musicReading = readGrayscaleSensor(musicGrayscaleSensor);
   
@@ -212,8 +215,22 @@ void updateNote() {
   }
   
   if (tempNote != note) {
-    note = tempNote;
-    updateTimerWait();
+    if (abs(tempNote-note) < 3) {
+
+      for (int n=0;n<4;n++) {
+        if (notesss[n] != tempNote) {
+          notesss[0] = notesss[1];
+          notesss[1] = notesss[2];
+          notesss[2] = notesss[3];
+          notesss[3] = tempNote;
+          return;
+        }
+      }
+      
+            note = tempNote;
+          updateTimerWait();
+            lastmilli= millis();
+    }
   }
 
     }
@@ -233,13 +250,14 @@ void followLine() {
   //Serial.println(lineReading);
   int difference = lineReading - edge;
   double leftMultiplier = 1, rightMultiplier = 1;
-  if (difference > 5) {
+  if (difference > 2) {
     rightMultiplier -= abs(difference) / 100.0;
     //Serial.println("slightlyLEFT");
-  } else if (difference < -5) {
+  } else if (difference < -2) {
     leftMultiplier += abs(difference) / 100.0;
     //Serial.println("slightlyRIGHT");
   } else {
+    updateNote();
     updateSpeed();
   }
   if(leftMultiplier > 1.2) leftMultiplier = 1.2;
@@ -287,7 +305,7 @@ void updateSpeed() {
     else if (desiredSpeed - LSpeedNow < -0.05)
       LVolts += 1;
 
-    if (desiredSpeed - RSpeedNow > 0.2)
+    if (desiredSpeed - RSpeedNow > 0.05)
       RVolts += 1;
     else if (desiredSpeed - RSpeedNow < -0.05)
       RVolts -= 1;
